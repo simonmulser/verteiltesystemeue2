@@ -8,7 +8,6 @@ public class Client implements SystemInInterface {
 	private Socket socket;
 	private SystemIn systemIn;
 	private PrintWriter out;
-	private ClientInUdp clientInUdp;
 	private ClientInTcp clientInTcp;
 	private String name = "";
 
@@ -18,19 +17,13 @@ public class Client implements SystemInInterface {
 			
 			socket = new Socket(host, Integer.parseInt(tcpPort));
 			out = new PrintWriter(socket.getOutputStream(), true);
-			
-			out.println("!udpPort " + udpPort);
-			
+						
 			systemIn = new SystemIn(this);
 			
-			clientInUdp = new ClientInUdp(Integer.parseInt(udpPort), this);
-
 			clientInTcp = new ClientInTcp(socket, this);
 
 			systemIn.start();
 			clientInTcp.start();
-			clientInUdp.start();
-
 			
 		} catch (UnknownHostException e) {
 			System.err.println("unkown host");
@@ -65,9 +58,6 @@ public class Client implements SystemInInterface {
 		
 		if(out != null)
 			out.close();
-		
-		if(clientInUdp != null)
-			clientInUdp.shutdown();
 		
 			try {
 				if(socket != null)
